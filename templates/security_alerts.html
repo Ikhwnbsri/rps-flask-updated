@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Security Alerts</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            text-align: left;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            max-width: 800px;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .alert-section {
+            margin-bottom: 20px;
+        }
+        .alert-section h2 {
+            color: #ff6347;  /* Red color for all section titles */
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .alert-section ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .alert-section li {
+            background-color: #f9f9f9;
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .brute-force-section li {
+            font-size: 14px; /* Smaller font for brute force attempt list */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Security Alerts</h1>
+
+        <!-- SQL Injection section at the top -->
+        <div class="alert-section">
+            <h2>SQL Injection Attempts</h2>
+            <ul>
+                {% for alert in sql_injection_attempts %}
+                    <li>{{ alert }}</li>
+                {% else %}
+                    <li>No SQL injection attempts detected.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Brute Force section -->
+        <div class="alert-section brute-force-section">
+            <h2>Brute Force Login Attempts</h2>
+            <ul>
+                {% for alert in brute_force_warnings %}
+                    <li>{{ alert }}</li>
+                {% else %}
+                    <li>No brute force attempts detected.</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Suspicious IP section -->
+        <div class="alert-section">
+            <h2>Suspicious IP Activity</h2>
+            <ul>
+                {% for alert in suspicious_ips %}
+                    <li>{{ alert }}</li>
+                {% else %}
+                    <li>No suspicious IP activity detected.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

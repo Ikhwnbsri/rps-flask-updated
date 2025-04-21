@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Game Result</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
+        .container { max-width: 400px; margin: auto; }
+        a { display: inline-block; margin: 10px; text-decoration: none; color: blue; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Game Result</h1>
+        <p>You chose: {{ user_choice }}</p>
+        <p>Computer chose: {{ computer_choice }}</p>
+        <p>Result: {{ result }}</p>
+        <a href="{{ url_for('play_game') }}">Play Again</a>
+        <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+    </div>
+</body>
+</html>

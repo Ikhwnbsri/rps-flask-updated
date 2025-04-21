@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Stats</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
+        .container { max-width: 400px; margin: auto; }
+        a { display: block; margin-top: 20px; text-decoration: none; color: blue; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Your Stats</h1>
+        <p>Wins: {{ wins }}</p>
+        <p>Losses: {{ losses }}</p>
+        <p>Draws: {{ draws }}</p>
+        <p>Win Rate: {{ win_rate }}%</p>
+        <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+    </div>
+</body>
+</html>

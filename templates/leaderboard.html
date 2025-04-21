@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Leaderboard</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
+        table { margin: auto; border-collapse: collapse; width: 60%; }
+        th, td { padding: 10px; border: 1px solid #ddd; }
+        th { background-color: #f2f2f2; }
+        a { display: block; margin-top: 20px; text-decoration: none; color: blue; }
+    </style>
+</head>
+<body>
+    <h1>Leaderboard</h1>
+    <table>
+        <tr><th>#</th><th>Username</th><th>Wins</th><th>Losses</th><th>Draws</th></tr>
+        {% for user in top_users %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.wins }}</td>
+                <td>{{ user.losses }}</td>
+                <td>{{ user.draws }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+</body>
+</html>

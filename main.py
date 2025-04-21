@@ -64,6 +64,10 @@ def hash_password(password, salt):
     return hashlib.sha256((password + salt).encode()).hexdigest()
 
 # Home route (for showing dashboard or main menu after login)
+@app.route('/')
+def home():
+    return redirect(url_for('login'))  # Redirect to the login page
+
 @app.route('/dashboard')
 def dashboard():
     if 'user_id' not in session:

@@ -283,3 +283,54 @@ INFO:werkzeug:127.0.0.1 - - [21/Apr/2025 23:46:36] "GET /dashboard HTTP/1.1" 200
 INFO:werkzeug:127.0.0.1 - - [21/Apr/2025 23:46:36] "GET /dashboard HTTP/1.1" 200 -
 INFO:werkzeug:127.0.0.1 - - [21/Apr/2025 23:46:38] "[32mGET /logout HTTP/1.1[0m" 302 -
 INFO:werkzeug:127.0.0.1 - - [21/Apr/2025 23:46:38] "GET /login HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 142-805-380
+INFO:werkzeug:127.0.0.1 - - [22/Apr/2025 14:02:57] "GET /login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Apr/2025 14:02:58] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [22/Apr/2025 14:03:40] "[32mPOST /login HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [22/Apr/2025 14:03:40] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Apr/2025 14:03:57] "GET /play_game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Apr/2025 14:04:08] "POST /play_game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Apr/2025 14:04:19] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Apr/2025 14:04:21] "GET /stats HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Apr/2025 14:04:22] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Apr/2025 14:04:23] "GET /leaderboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Apr/2025 14:04:24] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Apr/2025 14:04:25] "GET /security_alerts HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Apr/2025 14:04:32] "[32mGET /logout HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [22/Apr/2025 14:04:32] "GET /login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Apr/2025 18:58:42] "GET /login HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 142-805-380
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:23:45] "GET /login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:23:45] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:23:57] "[32mPOST /login HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:23:57] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:24:03] "GET /play_game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:24:04] "POST /play_game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:24:05] "GET /play_game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:24:10] "POST /play_game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:24:12] "GET /play_game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:24:13] "POST /play_game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:24:14] "GET /play_game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:24:23] "POST /play_game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:24:25] "GET /play_game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:24:31] "POST /play_game HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:24:34] "GET /dashboard HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:24:37] "[32mGET /logout HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:24:37] "GET /login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:24:52] "POST /login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:24:56] "GET /login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:25:01] "POST /login HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [23/Apr/2025 11:25:03] "GET /login HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m

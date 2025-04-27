@@ -12,3 +12,5 @@
 [2025-04-21 23:20:40.160787] Brute Force: Excessive failed logins from IP 127.0.0.1
 [2025-04-21 23:20:44.116531] Brute Force: Excessive failed logins from IP 127.0.0.1
 [2025-04-21 23:20:49.388370] Brute Force: Excessive failed logins from IP 127.0.0.1
+[2025-04-23 11:24:52.073897] SQL Injection: Attempt by IP 127.0.0.1 with username: ' OR 1=1 --
+[2025-04-23 11:25:01.438027] SQL Injection: Attempt by IP 127.0.0.1 with username: ' OR 1=1 --

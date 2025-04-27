@@ -282,3 +282,8 @@ def logout():
 
 if __name__ == '__main__':
     app.run(debug=False)
+
+# Ensure Flask listens on the right host and port for Railway
+if __name__ == '__main__':
+    port = os.getenv('PORT', 5000)  # Get port from the environment variable
+    app.run(debug=False, host='0.0.0.0', port=port)  # Listen on all IPs and the correct port

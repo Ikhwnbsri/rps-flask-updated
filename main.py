@@ -138,7 +138,7 @@ def login():
         for pattern in sql_injection_patterns:
             if pattern.lower() in username.lower() or pattern.lower() in password.lower():
                 log_security_alert("SQL Injection", f"Attempt by IP {ip_address} with username: {username}")
-                return "SQL injection attempt detected."
+                return render_template('sql_injection_alert.html')
 
         # --- Detect brute force: more than 5 failed attempts ---
         if failed_login_attempts.get(ip_address, 0) > 5:

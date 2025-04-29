@@ -47,10 +47,13 @@
             cursor: pointer;
             transition: all 0.3s ease;
             position: relative;
+            background-color: white;
+            overflow: hidden;
         }
         .choice:hover {
             transform: scale(1.1);
             border-color: #4CAF50;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
         }
         .choice input[type="radio"] {
             position: absolute;
@@ -58,52 +61,31 @@
             width: 0;
             height: 0;
         }
-        /* Define the icons with CSS instead of external images */
-        .rock-icon {
-            background-color: #5cb85c;
-            width: 70px;
-            height: 70px;
-            border-radius: 5px;
-            position: relative;
+        .choice-icon {
+            font-size: 50px;
+            line-height: 1;
         }
-        .rock-icon::after {
-            content: "+";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 40px;
-            color: white;
-            font-weight: bold;
+        .rock-icon {
+            color: #696969;
         }
         .paper-icon {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .paper-icon div {
-            width: 8px;
-            height: 8px;
-            background-color: #2c7be5;
-            border-radius: 50%;
+            color: #4169E1;
         }
         .scissors-icon {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            color: #FF6347;
         }
-        .scissors-icon div {
-            width: 8px;
-            height: 8px;
-            background-color: #6bc6e8;
-            border-radius: 50%;
+        .choice-label {
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 12px;
+            font-weight: bold;
+            color: #555;
         }
         .button {
-            padding: 10px 20px;
+            padding: 12px 25px;
             background-color: #4CAF50;
             color: white;
             border: none;
@@ -113,6 +95,8 @@
             display: inline-block;
             font-size: 16px;
             text-align: center;
+            font-weight: bold;
+            transition: background-color 0.3s;
         }
         .button:hover {
             background-color: #45a049;
@@ -122,6 +106,10 @@
             justify-content: center;
             gap: 10px;
             margin-top: 20px;
+        }
+        .selected {
+            border-color: #4CAF50;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
         }
     </style>
 </head>
@@ -138,25 +126,20 @@
                 <div class="choices">
                     <label class="choice" id="rock-choice">
                         <input type="radio" name="user_choice" value="rock" required>
-                        <div class="rock-icon"></div>
+                        <div class="choice-icon rock-icon">🪨</div>
+                        <div class="choice-label">Rock</div>
                     </label>
                     
                     <label class="choice" id="paper-choice">
                         <input type="radio" name="user_choice" value="paper">
-                        <div class="paper-icon">
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </div>
+                        <div class="choice-icon paper-icon">📄</div>
+                        <div class="choice-label">Paper</div>
                     </label>
                     
                     <label class="choice" id="scissors-choice">
                         <input type="radio" name="user_choice" value="scissors">
-                        <div class="scissors-icon">
-                            <div></div>
-                            <div></div>
-                            <div></div>
-                        </div>
+                        <div class="choice-icon scissors-icon">✂️</div>
+                        <div class="choice-label">Scissors</div>
                     </label>
                 </div>
                 
@@ -177,10 +160,9 @@
             choices.forEach(choice => {
                 choice.addEventListener('click', function() {
                     // Remove active class from all choices
-                    choices.forEach(c => c.style.borderColor = '#ddd');
+                    choices.forEach(c => c.classList.remove('selected'));
                     // Add active class to selected choice
-                    this.style.borderColor = '#4CAF50';
-                    this.style.boxShadow = '0 0 15px rgba(76, 175, 80, 0.5)';
+                    this.classList.add('selected');
                     // Select the radio button
                     const radio = this.querySelector('input[type="radio"]');
                     radio.checked = true;

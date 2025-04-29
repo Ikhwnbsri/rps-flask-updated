@@ -2,17 +2,19 @@
 <html>
 <head>
     <title>RPS Game - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
             padding: 0;
+            min-height: 100vh;
         }
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 15px;
         }
         .header {
             display: flex;
@@ -25,35 +27,55 @@
         .user-info {
             text-align: right;
         }
-        .stats-card {
+        .card {
             background-color: white;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 15px;
             margin-bottom: 20px;
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        .card-title i {
+            margin-right: 8px;
+            color: #4CAF50;
         }
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 10px;
         }
         .stat-box {
             background-color: #f8f8f8;
-            padding: 15px;
-            border-radius: 5px;
+            padding: 12px;
+            border-radius: 6px;
             text-align: center;
         }
-        .stat-number {
-            font-size: 24px;
-            font-weight: bold;
-            color: #4CAF50;
-            margin: 10px 0;
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 5px;
         }
-        .nav-buttons {
+        .stat-value {
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .win-value { color: #4CAF50; }
+        .loss-value { color: #f44336; }
+        .draw-value { color: #2196F3; }
+        .rate-value { color: #FF9800; }
+        
+        .button-container {
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
         .button {
             padding: 10px 15px;
@@ -63,11 +85,17 @@
             border-radius: 4px;
             cursor: pointer;
             text-decoration: none;
-            display: inline-block;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.3s, transform 0.2s;
+            font-weight: bold;
+        }
+        .button i {
+            margin-right: 8px;
         }
         .button:hover {
             background-color: #45a049;
+            transform: translateY(-2px);
         }
         .logout-button {
             background-color: #f44336;
@@ -75,44 +103,118 @@
         .logout-button:hover {
             background-color: #d32f2f;
         }
+        
+        .recent-games {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .game-result {
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 6px;
+            text-align: center;
+            width: 32%;
+        }
+        .game-outcome {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .win-outcome { color: #4CAF50; }
+        .loss-outcome { color: #f44336; }
+        .draw-outcome { color: #2196F3; }
+        .game-choices {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            height: 6px;
+            margin-top: 5px;
+        }
+        .progress-bar {
+            height: 100%;
+            border-radius: 4px;
+            background-color: #4CAF50;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Welcome to Rock Paper Scissors</h1>
+            <h1>Welcome to Rock Paper Scissors Game</h1>
             <div class="user-info">
-                <p>Logged in as: <strong>{{ username }}</strong></p>
-                <a href="{{ url_for('logout') }}" class="button logout-button">Logout</a>
+                <p>Logged in as: <strong>{% if username is defined %}{{ username }}{% else %}{{ session.get('username', 'Player') }}{% endif %}</strong></p>
+                <a href="{{ url_for('logout') }}" class="button logout-button"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </div>
         </div>
         
-        <div class="stats-card">
-            <h2>Your Statistics</h2>
+        <div class="card">
+            <div class="card-title"><i class="fas fa-chart-bar"></i> Your Statistics</div>
             <div class="stats-grid">
                 <div class="stat-box">
-                    <div>Wins</div>
-                    <div class="stat-number">{{ wins }}</div>
+                    <div class="stat-label"><i class="fas fa-trophy"></i> Wins</div>
+                    <div class="stat-value win-value">{{ wins }}</div>
                 </div>
                 <div class="stat-box">
-                    <div>Losses</div>
-                    <div class="stat-number">{{ losses }}</div>
+                    <div class="stat-label"><i class="fas fa-times-circle"></i> Losses</div>
+                    <div class="stat-value loss-value">{{ losses }}</div>
                 </div>
                 <div class="stat-box">
-                    <div>Draws</div>
-                    <div class="stat-number">{{ draws }}</div>
+                    <div class="stat-label"><i class="fas fa-handshake"></i> Draws</div>
+                    <div class="stat-value draw-value">{{ draws }}</div>
                 </div>
                 <div class="stat-box">
-                    <div>Win Rate</div>
-                    <div class="stat-number">{{ "%.1f"|format(win_rate) }}%</div>
+                    <div class="stat-label"><i class="fas fa-percent"></i> Win Rate</div>
+                    <div class="stat-value rate-value">{{ "%.1f"|format(win_rate) }}%</div>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: {{ win_rate }}%;"></div>
+                    </div>
                 </div>
             </div>
         </div>
         
-        <div class="nav-buttons">
-            <a href="{{ url_for('play_game') }}" class="button">Play Game</a>
-            <a href="{{ url_for('leaderboard') }}" class="button">Leaderboard</a>
-            <a href="{{ url_for('view_stats') }}" class="button">Detailed Stats</a>
+        <div class="card">
+            <div class="card-title"><i class="fas fa-gamepad"></i> Game Options</div>
+            <div class="button-container">
+                <a href="{{ url_for('play_game') }}" class="button"><i class="fas fa-play"></i> Play Game</a>
+                <a href="{{ url_for('leaderboard') }}" class="button"><i class="fas fa-trophy"></i> Leaderboard</a>
+                <a href="{{ url_for('view_stats') }}" class="button"><i class="fas fa-chart-line"></i> Detailed Stats</a>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title"><i class="fas fa-star"></i> Achievement Status</div>
+            <div class="recent-games">
+                <div class="game-result">
+                    <div class="game-outcome win-outcome">
+                        <i class="fas fa-medal fa-2x"></i>
+                    </div>
+                    <div class="game-choices">
+                        {% if wins >= 10 %}<b>10 Wins Achieved!</b>{% else %}Win 10 games{% endif %}
+                    </div>
+                </div>
+                <div class="game-result">
+                    <div class="game-outcome">
+                        <i class="fas fa-award fa-2x" style="color: {% if wins + losses + draws >= 100 %}#FFD700{% else %}#aaa{% endif %};"></i>
+                    </div>
+                    <div class="game-choices">
+                        {% if wins + losses + draws >= 100 %}<b>100 Games Played Achieved!</b>{% else %}Play 100 games{% endif %}
+                    </div>
+                </div>
+                <div class="game-result">
+                    <div class="game-outcome">
+                        <i class="fas fa-crown fa-2x" style="color: {% if win_rate >= 50 %}#FFD700{% else %}#aaa{% endif %};"></i>
+                    </div>
+                    <div class="game-choices">
+                        {% if win_rate >= 50 %}<b>50% Win Rate Achieved!</b>{% else %}Reach 50% Win Rate{% endif %}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>

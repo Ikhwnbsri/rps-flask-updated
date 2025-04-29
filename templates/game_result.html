@@ -12,13 +12,13 @@
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 15px;
         }
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid #ddd;
         }
@@ -26,15 +26,15 @@
             background-color: white;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
             text-align: center;
         }
         .result-display {
-            font-size: 24px;
-            margin: 20px 0;
-            padding: 15px;
+            margin: 15px 0;
+            padding: 30px;
             border-radius: 5px;
+            background-color: #e2e3e5;
         }
         .win {
             background-color: #d4edda;
@@ -48,22 +48,28 @@
             background-color: #e2e3e5;
             color: #383d41;
         }
+        .result-text {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0;
+            color: #2c3e50;
+        }
         .choices {
             display: flex;
             justify-content: space-around;
-            margin: 30px 0;
+            margin: 15px 0;
         }
         .choice-box {
             text-align: center;
-            padding: 15px;
+            padding: 10px;
             border-radius: 5px;
             background-color: #f8f9fa;
             width: 40%;
         }
         .choice-img {
-            width: 80px;
-            height: 80px;
-            margin: 10px auto;
+            width: 70px;
+            height: 70px;
+            margin: 5px auto;
             border-radius: 50%;
             background-color: #fff;
             display: flex;
@@ -71,54 +77,25 @@
             justify-content: center;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        
-        /* Define the icons with CSS instead of external images */
-        .rock-icon {
-            background-color: #5cb85c;
-            width: 50px;
-            height: 50px;
-            border-radius: 5px;
-            position: relative;
+        .choice-icon {
+            font-size: 40px;
+            line-height: 1;
         }
-        .rock-icon::after {
-            content: "+";
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 30px;
-            color: white;
-            font-weight: bold;
+        .rock-icon {
+            color: #696969;
         }
         .paper-icon {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-        .paper-icon div {
-            width: 6px;
-            height: 6px;
-            background-color: #2c7be5;
-            border-radius: 50%;
+            color: #4169E1;
         }
         .scissors-icon {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            color: #FF6347;
         }
-        .scissors-icon div {
-            width: 6px;
-            height: 6px;
-            background-color: #6bc6e8;
-            border-radius: 50%;
+        h3 {
+            margin: 5px 0;
+            font-size: 16px;
         }
-        
         .button {
-            padding: 10px 15px;
+            padding: 10px 20px;
             background-color: #4CAF50;
             color: white;
             border: none;
@@ -126,7 +103,9 @@
             cursor: pointer;
             text-decoration: none;
             display: inline-block;
-            margin: 10px 5px;
+            margin: 5px;
+            font-size: 16px;
+            font-weight: bold;
         }
         .button:hover {
             background-color: #45a049;
@@ -135,7 +114,10 @@
             display: flex;
             justify-content: center;
             gap: 10px;
-            margin-top: 20px;
+            margin-top: 10px;
+        }
+        p {
+            margin: 5px 0;
         }
     </style>
 </head>
@@ -149,15 +131,15 @@
         <div class="result-area">
             {% if result == 'user' %}
                 <div class="result-display win">
-                    <h2>You Won!</h2>
+                    <div class="result-text">You Won! 🏆</div>
                 </div>
             {% elif result == 'computer' %}
                 <div class="result-display lose">
-                    <h2>You Lost!</h2>
+                    <div class="result-text">You Lost! 😞</div>
                 </div>
             {% else %}
                 <div class="result-display draw">
-                    <h2>It's a Draw!</h2>
+                    <div class="result-text">It's a Draw! 🤝</div>
                 </div>
             {% endif %}
             
@@ -166,19 +148,11 @@
                     <h3>Your Choice</h3>
                     <div class="choice-img">
                         {% if user_choice == 'rock' %}
-                            <div class="rock-icon"></div>
+                            <div class="choice-icon rock-icon">🪨</div>
                         {% elif user_choice == 'paper' %}
-                            <div class="paper-icon">
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                            </div>
+                            <div class="choice-icon paper-icon">📄</div>
                         {% else %}
-                            <div class="scissors-icon">
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                            </div>
+                            <div class="choice-icon scissors-icon">✂️</div>
                         {% endif %}
                     </div>
                     <p>{{ user_choice|capitalize }}</p>
@@ -188,19 +162,11 @@
                     <h3>Computer's Choice</h3>
                     <div class="choice-img">
                         {% if computer_choice == 'rock' %}
-                            <div class="rock-icon"></div>
+                            <div class="choice-icon rock-icon">🪨</div>
                         {% elif computer_choice == 'paper' %}
-                            <div class="paper-icon">
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                            </div>
+                            <div class="choice-icon paper-icon">📄</div>
                         {% else %}
-                            <div class="scissors-icon">
-                                <div></div>
-                                <div></div>
-                                <div></div>
-                            </div>
+                            <div class="choice-icon scissors-icon">✂️</div>
                         {% endif %}
                     </div>
                     <p>{{ computer_choice|capitalize }}</p>

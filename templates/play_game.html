@@ -46,18 +46,64 @@
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
         }
         .choice:hover {
             transform: scale(1.1);
             border-color: #4CAF50;
         }
-        .choice img {
-            width: 70%;
-            height: 70%;
-            object-fit: contain;
+        .choice input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        /* Define the icons with CSS instead of external images */
+        .rock-icon {
+            background-color: #5cb85c;
+            width: 70px;
+            height: 70px;
+            border-radius: 5px;
+            position: relative;
+        }
+        .rock-icon::after {
+            content: "+";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            color: white;
+            font-weight: bold;
+        }
+        .paper-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .paper-icon div {
+            width: 8px;
+            height: 8px;
+            background-color: #2c7be5;
+            border-radius: 50%;
+        }
+        .scissors-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .scissors-icon div {
+            width: 8px;
+            height: 8px;
+            background-color: #6bc6e8;
+            border-radius: 50%;
         }
         .button {
-            padding: 10px 15px;
+            padding: 10px 20px;
             background-color: #4CAF50;
             color: white;
             border: none;
@@ -65,7 +111,8 @@
             cursor: pointer;
             text-decoration: none;
             display: inline-block;
-            margin-top: 20px;
+            font-size: 16px;
+            text-align: center;
         }
         .button:hover {
             background-color: #45a049;
@@ -89,19 +136,27 @@
             <h2>Choose Your Move</h2>
             <form method="POST" action="{{ url_for('play_game') }}">
                 <div class="choices">
-                    <label for="rock" class="choice">
-                        <input type="radio" id="rock" name="user_choice" value="rock" style="display: none;">
-                        <img src="https://cdn-icons-png.flaticon.com/128/6821/6821177.png" alt="Rock">
+                    <label class="choice" id="rock-choice">
+                        <input type="radio" name="user_choice" value="rock" required>
+                        <div class="rock-icon"></div>
                     </label>
                     
-                    <label for="paper" class="choice">
-                        <input type="radio" id="paper" name="user_choice" value="paper" style="display: none;">
-                        <img src="https://cdn-icons-png.flaticon.com/128/6821/6821183.png" alt="Paper">
+                    <label class="choice" id="paper-choice">
+                        <input type="radio" name="user_choice" value="paper">
+                        <div class="paper-icon">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
                     </label>
                     
-                    <label for="scissors" class="choice">
-                        <input type="radio" id="scissors" name="user_choice" value="scissors" style="display: none;">
-                        <img src="https://cdn-icons-png.flaticon.com/128/6821/6821186.png" alt="Scissors">
+                    <label class="choice" id="scissors-choice">
+                        <input type="radio" name="user_choice" value="scissors">
+                        <div class="scissors-icon">
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                        </div>
                     </label>
                 </div>
                 
@@ -117,17 +172,19 @@
     
     <script>
         // Add active class to selected choice
-        const choices = document.querySelectorAll('.choice');
-        choices.forEach(choice => {
-            choice.addEventListener('click', function() {
-                // Remove active class from all choices
-                choices.forEach(c => c.style.borderColor = '#ddd');
-                // Add active class to selected choice
-                this.style.borderColor = '#4CAF50';
-                this.style.boxShadow = '0 0 15px rgba(76, 175, 80, 0.5)';
-                // Select the radio button
-                const radio = this.querySelector('input[type="radio"]');
-                radio.checked = true;
+        document.addEventListener('DOMContentLoaded', function() {
+            const choices = document.querySelectorAll('.choice');
+            choices.forEach(choice => {
+                choice.addEventListener('click', function() {
+                    // Remove active class from all choices
+                    choices.forEach(c => c.style.borderColor = '#ddd');
+                    // Add active class to selected choice
+                    this.style.borderColor = '#4CAF50';
+                    this.style.boxShadow = '0 0 15px rgba(76, 175, 80, 0.5)';
+                    // Select the radio button
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                });
             });
         });
     </script>

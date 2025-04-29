@@ -71,11 +71,52 @@
             justify-content: center;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         }
-        .choice-img img {
-            width: 60%;
-            height: 60%;
-            object-fit: contain;
+        
+        /* Define the icons with CSS instead of external images */
+        .rock-icon {
+            background-color: #5cb85c;
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+            position: relative;
         }
+        .rock-icon::after {
+            content: "+";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 30px;
+            color: white;
+            font-weight: bold;
+        }
+        .paper-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .paper-icon div {
+            width: 6px;
+            height: 6px;
+            background-color: #2c7be5;
+            border-radius: 50%;
+        }
+        .scissors-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .scissors-icon div {
+            width: 6px;
+            height: 6px;
+            background-color: #6bc6e8;
+            border-radius: 50%;
+        }
+        
         .button {
             padding: 10px 15px;
             background-color: #4CAF50;
@@ -107,3 +148,70 @@
         
         <div class="result-area">
             {% if result == 'user' %}
+                <div class="result-display win">
+                    <h2>You Won!</h2>
+                </div>
+            {% elif result == 'computer' %}
+                <div class="result-display lose">
+                    <h2>You Lost!</h2>
+                </div>
+            {% else %}
+                <div class="result-display draw">
+                    <h2>It's a Draw!</h2>
+                </div>
+            {% endif %}
+            
+            <div class="choices">
+                <div class="choice-box">
+                    <h3>Your Choice</h3>
+                    <div class="choice-img">
+                        {% if user_choice == 'rock' %}
+                            <div class="rock-icon"></div>
+                        {% elif user_choice == 'paper' %}
+                            <div class="paper-icon">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
+                        {% else %}
+                            <div class="scissors-icon">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <p>{{ user_choice|capitalize }}</p>
+                </div>
+                
+                <div class="choice-box">
+                    <h3>Computer's Choice</h3>
+                    <div class="choice-img">
+                        {% if computer_choice == 'rock' %}
+                            <div class="rock-icon"></div>
+                        {% elif computer_choice == 'paper' %}
+                            <div class="paper-icon">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
+                        {% else %}
+                            <div class="scissors-icon">
+                                <div></div>
+                                <div></div>
+                                <div></div>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <p>{{ computer_choice|capitalize }}</p>
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <a href="{{ url_for('play_game') }}" class="button">Play Again</a>
+                <a href="{{ url_for('view_stats') }}" class="button">View Stats</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

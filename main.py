@@ -7,42 +7,30 @@ import logging
 from datetime import datetime
 from collections import defaultdict
 
+# Set up logging to stdout for Railway compatibility
+logging.basicConfig(
+    level=logging.INFO,
+    format='[%(asctime)s] %(levelname)s: %(message)s',
+    handlers=[logging.StreamHandler()]
+)
+
+# For brute force detection: Keep track of failed login attempts
 failed_login_attempts = defaultdict(int)
 
 def log_failed_login(username, ip_address):
     failed_login_attempts[ip_address] += 1
-    print(f"[SECURITY ALERT] Failed login attempt from {username} @ {ip_address} | Attempt #{failed_login_attempts[ip_address]}")
+    logging.warning(f"[SECURITY ALERT] Failed login attempt from {username} @ {ip_address} | Attempt #{failed_login_attempts[ip_address]}")
 
 def log_security_alert(alert_type, message):
-    with open("security.log", "a") as f:
-        f.write(f"[{datetime.now()}] {alert_type}: {message}\n")
-
-
-# Set up logging for security events
-logging.basicConfig(filename='security_logs.txt', level=logging.INFO)
-
-# For brute force detection: Keep track of failed login attempts
-failed_login_attempts = {}
-
-# Function to log failed login attempts
-def log_failed_login(username, ip):
-    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    logging.info(f"Failed login attempt by {username} from IP {ip} at {timestamp}")
-    if ip not in failed_login_attempts:
-        failed_login_attempts[ip] = 1
-    else:
-        failed_login_attempts[ip] += 1
-
-# Function to detect possible SQL injection
-def log_sql_injection_attempt(query, ip):
-    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    logging.info(f"Possible SQL injection detected: {query} from IP {ip} at {timestamp}")
+    logging.warning(f"[{alert_type}] {message}")
 
 app = Flask(__name__)
-app.secret_key = os.urandom(24)
+# Use an environment variable for the secret key with a fallback
+app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24))
 
-# Database setup function (same as your code)
+# Database setup function
 def setup_database():
+    # For Railway, use an in-memory database or set up a proper DB URL
     conn = sqlite3.connect('rps_game.db')
     cursor = conn.cursor()
     cursor.execute('''CREATE TABLE IF NOT EXISTS users (
@@ -56,7 +44,7 @@ def setup_database():
     conn.commit()
     return conn
 
-# Security functions (same as your code)
+# Security functions
 def generate_salt():
     return os.urandom(16).hex()
 
@@ -76,19 +64,25 @@ def dashboard():
     user_id = session['user_id']
     conn = setup_database()
     cursor = conn.cursor()
-    cursor.execute("SELECT wins, losses, draws FROM users WHERE id = ?", (user_id,))
-    stats = cursor.fetchone()
+    cursor.execute("SELECT username, wins, losses, draws FROM users WHERE id = ?", (user_id,))
+    user_data = cursor.fetchone()
     conn.close()
     
-    if stats:
-        wins, losses, draws = stats
+    if user_data:
+        username, wins, losses, draws = user_data
         total_games = wins + losses + draws
         win_rate = (wins / total_games * 100) if total_games > 0 else 0
     else:
+        username = session.get('username', 'Unknown')
         wins = losses = draws = 0
         win_rate = 0
     
-    return render_template('dashboard.html', wins=wins, losses=losses, draws=draws, win_rate=win_rate)
+    return render_template('dashboard.html', 
+                           username=username,
+                           wins=wins, 
+                           losses=losses, 
+                           draws=draws, 
+                           win_rate=win_rate)
 
 @app.route('/stats')
 def view_stats():
@@ -124,37 +118,13 @@ def leaderboard():
 
 @app.route('/security_alerts')
 def security_alerts():
-    sql_injection_attempts = []
-    brute_force_warnings = []
-    suspicious_ips = []
-
-    try:
-        with open('security.log', 'r') as f:
-            for line in f:
-                if 'SQL Injection' in line:
-                    sql_injection_attempts.append(line.strip())
-                elif 'Brute Force' in line:
-                    brute_force_warnings.append(line.strip())
-                elif 'Suspicious activity from IP' in line:
-                    suspicious_ips.append(line.strip())
-    except FileNotFoundError:
-        pass  # No log file yet
-
+    # For Railway, we won't read from physical files
     return render_template(
         'security_alerts.html',
-        sql_injection_attempts=sql_injection_attempts,
-        brute_force_warnings=brute_force_warnings,
-        suspicious_ips=suspicious_ips
+        sql_injection_attempts=[],
+        brute_force_warnings=[],
+        suspicious_ips=[]
     )
-
-
-# Login route
-from flask import request, session, redirect, url_for, render_template
-import re
-from datetime import datetime
-
-# Dictionary to count failed logins per IP
-failed_login_attempts = {}
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -208,8 +178,6 @@ def login():
 
     return render_template('login.html')
 
-
-# Register route
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
@@ -236,7 +204,6 @@ def register():
     
     return render_template('register.html')
 
-# Play game route
 @app.route('/play_game', methods=['GET', 'POST'])
 def play_game():
     if 'user_id' not in session:
@@ -246,7 +213,7 @@ def play_game():
         user_choice = request.form['user_choice']
         computer_choice = random.choice(['rock', 'paper', 'scissors'])
         
-        # Determine winner logic from your original code
+        # Determine winner logic
         if user_choice == computer_choice:
             result = 'draw'
         elif (user_choice == 'rock' and computer_choice == 'scissors') or \
@@ -256,7 +223,7 @@ def play_game():
         else:
             result = 'computer'
         
-        # Update stats and return result
+        # Update stats
         user_id = session['user_id']
         conn = setup_database()
         cursor = conn.cursor()
@@ -269,22 +236,23 @@ def play_game():
         conn.commit()
         conn.close()
         
-        return render_template('game_result.html', result=result, user_choice=user_choice, computer_choice=computer_choice)
+        return render_template('game_result.html', 
+                               result=result, 
+                               user_choice=user_choice, 
+                               computer_choice=computer_choice)
     
     return render_template('play_game.html')
 
-# Logout route
 @app.route('/logout')
 def logout():
     session.pop('user_id', None)
     session.pop('username', None)
     return redirect(url_for('login'))
 
+# This is the correct way to configure the app for Railway
 if __name__ == '__main__':
-    app.run(debug=False)
-
-# Ensure Flask listens on the right host and port for Railway
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
-    print("App is running on port:", os.environ.get('PORT', 8080))
-
+    # Get port from environment variable or default to 5000
+    port = int(os.environ.get('PORT', 5000))
+    # Bind to 0.0.0.0 to listen on all interfaces
+    app.run(host='0.0.0.0', port=port)
+    print(f"App is running on port: {port}")

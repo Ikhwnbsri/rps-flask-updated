@@ -1,47 +1,135 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Play Game</title>
+    <title>RPS Game - Play</title>
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             font-family: Arial, sans-serif;
-            background-color: #f9f9f9;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
         }
         .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .game-area {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
             text-align: center;
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        button {
-            padding: 10px 20px;
-            margin: 10px;
-            font-size: 16px;
+        .choices {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .choice {
+            width: 120px;
+            height: 120px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
-        a {
-            display: block;
-            margin-top: 20px;
+        .choice:hover {
+            transform: scale(1.1);
+            border-color: #4CAF50;
+        }
+        .choice img {
+            width: 70%;
+            height: 70%;
+            object-fit: contain;
+        }
+        .button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
             text-decoration: none;
-            color: blue;
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Choose your option:</h1>
-        <form method="POST">
-            <button type="submit" name="user_choice" value="rock">Rock</button>
-            <button type="submit" name="user_choice" value="paper">Paper</button>
-            <button type="submit" name="user_choice" value="scissors">Scissors</button>
-        </form>
-        <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+        <div class="header">
+            <h1>Rock Paper Scissors Game</h1>
+            <a href="{{ url_for('dashboard') }}" class="button">Back to Dashboard</a>
+        </div>
+        
+        <div class="game-area">
+            <h2>Choose Your Move</h2>
+            <form method="POST" action="{{ url_for('play_game') }}">
+                <div class="choices">
+                    <label for="rock" class="choice">
+                        <input type="radio" id="rock" name="user_choice" value="rock" style="display: none;">
+                        <img src="https://cdn-icons-png.flaticon.com/128/6821/6821177.png" alt="Rock">
+                    </label>
+                    
+                    <label for="paper" class="choice">
+                        <input type="radio" id="paper" name="user_choice" value="paper" style="display: none;">
+                        <img src="https://cdn-icons-png.flaticon.com/128/6821/6821183.png" alt="Paper">
+                    </label>
+                    
+                    <label for="scissors" class="choice">
+                        <input type="radio" id="scissors" name="user_choice" value="scissors" style="display: none;">
+                        <img src="https://cdn-icons-png.flaticon.com/128/6821/6821186.png" alt="Scissors">
+                    </label>
+                </div>
+                
+                <button type="submit" class="button">Play!</button>
+            </form>
+        </div>
+        
+        <div class="nav-buttons">
+            <a href="{{ url_for('dashboard') }}" class="button">Dashboard</a>
+            <a href="{{ url_for('leaderboard') }}" class="button">Leaderboard</a>
+        </div>
     </div>
+    
+    <script>
+        // Add active class to selected choice
+        const choices = document.querySelectorAll('.choice');
+        choices.forEach(choice => {
+            choice.addEventListener('click', function() {
+                // Remove active class from all choices
+                choices.forEach(c => c.style.borderColor = '#ddd');
+                // Add active class to selected choice
+                this.style.borderColor = '#4CAF50';
+                this.style.boxShadow = '0 0 15px rgba(76, 175, 80, 0.5)';
+                // Select the radio button
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+            });
+        });
+    </script>
 </body>
 </html>

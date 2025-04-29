@@ -1,22 +1,146 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Your Stats</title>
+    <title>RPS Game - Statistics</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
-        .container { max-width: 400px; margin: auto; }
-        a { display: block; margin-top: 20px; text-decoration: none; color: blue; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .stats-card {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .stats-table th,
+        .stats-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .stats-table th {
+            background-color: #f8f8f8;
+            font-weight: bold;
+        }
+        .button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .win-color {
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .loss-color {
+            color: #f44336;
+            font-weight: bold;
+        }
+        .draw-color {
+            color: #2196F3;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Your Stats</h1>
-        <p>Wins: {{ wins }}</p>
-        <p>Losses: {{ losses }}</p>
-        <p>Draws: {{ draws }}</p>
-        <p>Win Rate: {{ win_rate }}%</p>
-        <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+        <div class="header">
+            <h1>Your Game Statistics</h1>
+            <a href="{{ url_for('dashboard') }}" class="button">Back to Dashboard</a>
+        </div>
+        
+        <div class="stats-card">
+            <h2>Performance Overview</h2>
+            
+            <table class="stats-table">
+                <tr>
+                    <th>Statistic</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>Total Games</td>
+                    <td>{{ wins + losses + draws }}</td>
+                </tr>
+                <tr>
+                    <td>Wins</td>
+                    <td class="win-color">{{ wins }}</td>
+                </tr>
+                <tr>
+                    <td>Losses</td>
+                    <td class="loss-color">{{ losses }}</td>
+                </tr>
+                <tr>
+                    <td>Draws</td>
+                    <td class="draw-color">{{ draws }}</td>
+                </tr>
+                <tr>
+                    <td>Win Rate</td>
+                    <td>
+                    {% if wins + losses + draws > 0 %}
+                        {{ "%.1f"|format(wins / (wins + losses + draws) * 100) }}%
+                    {% else %}
+                        0.0%
+                    {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>Win-Loss Ratio</td>
+                    <td>
+                    {% if losses > 0 %}
+                        {{ "%.2f"|format(wins / losses) }}
+                    {% else %}
+                        {% if wins > 0 %}∞{% else %}0.00{% endif %}
+                    {% endif %}
+                    </td>
+                </tr>
+            </table>
+            
+            {% if wins + losses + draws == 0 %}
+            <div style="text-align: center; margin: 30px 0;">
+                <p>You haven't played any games yet. Start playing to see your statistics!</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="nav-buttons">
+            <a href="{{ url_for('play_game') }}" class="button">Play Game</a>
+            <a href="{{ url_for('leaderboard') }}" class="button">View Leaderboard</a>
+        </div>
     </div>
 </body>
 </html>

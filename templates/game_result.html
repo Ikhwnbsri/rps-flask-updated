@@ -1,22 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Game Result</title>
+    <title>RPS Game - Result</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
-        .container { max-width: 400px; margin: auto; }
-        a { display: inline-block; margin: 10px; text-decoration: none; color: blue; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .result-area {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .result-display {
+            font-size: 24px;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .win {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .lose {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .draw {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+        .choices {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+        .choice-box {
+            text-align: center;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f8f9fa;
+            width: 40%;
+        }
+        .choice-img {
+            width: 80px;
+            height: 80px;
+            margin: 10px auto;
+            border-radius: 50%;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .choice-img img {
+            width: 60%;
+            height: 60%;
+            object-fit: contain;
+        }
+        .button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 5px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Game Result</h1>
-        <p>You chose: {{ user_choice }}</p>
-        <p>Computer chose: {{ computer_choice }}</p>
-        <p>Result: {{ result }}</p>
-        <a href="{{ url_for('play_game') }}">Play Again</a>
-        <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
-    </div>
-</body>
-</html>
+        <div class="header">
+            <h1>Game Result</h1>
+            <a href="{{ url_for('dashboard') }}" class="button">Back to Dashboard</a>
+        </div>
+        
+        <div class="result-area">
+            {% if result == 'user' %}

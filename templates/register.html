@@ -1,78 +1,91 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Register</title>
+    <title>RPS Game - Register</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
         body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-        .form-container {
+        .container {
             background-color: white;
-            padding: 40px 50px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
         }
         h1 {
-            margin-bottom: 20px;
+            text-align: center;
+            color: #333;
         }
-        input[type="text"],
-        input[type="password"] {
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+        input[type="text"], input[type="password"] {
             width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            font-size: 16px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
         }
         button {
             width: 100%;
-            padding: 12px;
-            background-color: #007bff;
+            padding: 10px;
+            background-color: #4CAF50;
             color: white;
-            font-size: 16px;
             border: none;
-            border-radius: 5px;
-            margin-top: 10px;
+            border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #45a049;
         }
-        .link-btn {
-            background-color: #6c757d;
+        .login-link {
+            text-align: center;
             margin-top: 15px;
         }
-        .link-btn:hover {
-            background-color: #5a6268;
+        .login-link a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        .login-link a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="form-container">
-        <h1>Register</h1>
-        <form method="POST">
-            <input type="text" name="username" placeholder="Username" required><br>
-            <input type="password" name="password" placeholder="Password" required><br>
-            <input type="password" name="confirm_password" placeholder="Confirm Password" required><br>
+    <div class="container">
+        <h1>Create Account</h1>
+        <form method="POST" action="{{ url_for('register') }}">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password:</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+            </div>
             <button type="submit">Register</button>
         </form>
-        <form action="{{ url_for('login') }}" method="get">
-            <button type="submit" class="link-btn">Back to Login</button>
-        </form>
+        <div class="login-link">
+            Already have an account? <a href="{{ url_for('login') }}">Login</a>
+        </div>
     </div>
 </body>
 </html>

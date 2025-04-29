@@ -1,30 +1,144 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Leaderboard</title>
+    <title>RPS Game - Leaderboard</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
-        table { margin: auto; border-collapse: collapse; width: 60%; }
-        th, td { padding: 10px; border: 1px solid #ddd; }
-        th { background-color: #f2f2f2; }
-        a { display: block; margin-top: 20px; text-decoration: none; color: blue; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .leaderboard-card {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        .leaderboard-table th,
+        .leaderboard-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .leaderboard-table th {
+            background-color: #f8f8f8;
+            font-weight: bold;
+            color: #333;
+        }
+        .leaderboard-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .leaderboard-table tr:hover {
+            background-color: #e9e9e9;
+        }
+        .rank {
+            font-weight: bold;
+            text-align: center;
+            width: 50px;
+        }
+        .rank-1 {
+            color: gold;
+        }
+        .rank-2 {
+            color: silver;
+        }
+        .rank-3 {
+            color: #cd7f32; /* Bronze */
+        }
+        .trophy {
+            font-size: 20px;
+        }
+        .button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-    <h1>Leaderboard</h1>
-    <table>
-        <tr><th>#</th><th>Username</th><th>Wins</th><th>Losses</th><th>Draws</th></tr>
-        {% for user in top_users %}
-            <tr>
-                <td>{{ loop.index }}</td>
-                <td>{{ user.username }}</td>
-                <td>{{ user.wins }}</td>
-                <td>{{ user.losses }}</td>
-                <td>{{ user.draws }}</td>
-            </tr>
-        {% endfor %}
-    </table>
-    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+    <div class="container">
+        <div class="header">
+            <h1>Game Leaderboard</h1>
+            <a href="{{ url_for('dashboard') }}" class="button">Back to Dashboard</a>
+        </div>
+        
+        <div class="leaderboard-card">
+            <h2>Top Players</h2>
+            
+            {% if top_users %}
+            <table class="leaderboard-table">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Player</th>
+                        <th>Wins</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in top_users %}
+                    <tr>
+                        <td class="rank rank-{{ loop.index }}">
+                            {% if loop.index == 1 %}
+                            <span class="trophy">🏆</span>
+                            {% elif loop.index == 2 %}
+                            <span class="trophy">🥈</span>
+                            {% elif loop.index == 3 %}
+                            <span class="trophy">🥉</span>
+                            {% else %}
+                            {{ loop.index }}
+                            {% endif %}
+                        </td>
+                        <td>{{ user[0] }}</td>
+                        <td>{{ user[1] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div style="text-align: center; margin: 30px 0;">
+                <p>No players have recorded any wins yet. Be the first!</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="nav-buttons">
+            <a href="{{ url_for('play_game') }}" class="button">Play Game</a>
+            <a href="{{ url_for('view_stats') }}" class="button">View Your Stats</a>
+        </div>
+    </div>
 </body>
 </html>

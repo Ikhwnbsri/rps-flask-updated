@@ -1,69 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard</title>
+    <title>RPS Game - Dashboard</title>
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             margin: 0;
+            padding: 0;
         }
-        .dashboard-container {
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .user-info {
+            text-align: right;
+        }
+        .stats-card {
             background-color: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-            text-align: center;
-            width: 400px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
         }
-        h1, h2, p {
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background-color: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
             margin: 10px 0;
         }
-        .stats {
-            margin: 20px 0;
-        }
-        .menu {
+        .nav-buttons {
             display: flex;
-            flex-direction: column;
             gap: 10px;
             margin-top: 20px;
         }
-        .menu a {
-            padding: 10px;
-            background-color: #007bff;
+        .button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
             color: white;
-            border-radius: 6px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
             text-decoration: none;
-            font-weight: bold;
-            transition: background-color 0.2s;
+            display: inline-block;
+            text-align: center;
         }
-        .menu a:hover {
-            background-color: #0056b3;
+        .button:hover {
+            background-color: #45a049;
+        }
+        .logout-button {
+            background-color: #f44336;
+        }
+        .logout-button:hover {
+            background-color: #d32f2f;
         }
     </style>
 </head>
 <body>
-    <div class="dashboard-container">
-        <h1>Welcome, {{ session['username'] }}</h1>
-        <h2>Your All-Time Stats:</h2>
-        <div class="stats">
-            <p><strong>Wins:</strong> {{ wins }}</p>
-            <p><strong>Losses:</strong> {{ losses }}</p>
-            <p><strong>Draws:</strong> {{ draws }}</p>
-            <p><strong>Win Rate:</strong> {{  '%.2f' % win_rate }}%</p>
+    <div class="container">
+        <div class="header">
+            <h1>Welcome to Rock Paper Scissors</h1>
+            <div class="user-info">
+                <p>Logged in as: <strong>{{ username }}</strong></p>
+                <a href="{{ url_for('logout') }}" class="button logout-button">Logout</a>
+            </div>
         </div>
-        <h2>Menu</h2>
-        <div class="menu">
-            <a href="{{ url_for('play_game') }}">Play Game</a>
-            <a href="{{ url_for('view_stats') }}">View My Stats</a>
-            <a href="{{ url_for('leaderboard') }}">View Leaderboard</a>
-            <a href="{{ url_for('logout') }}">Logout</a>
-            <a href="{{ url_for('security_alerts') }}">Check Security Alerts</a>
+        
+        <div class="stats-card">
+            <h2>Your Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div>Wins</div>
+                    <div class="stat-number">{{ wins }}</div>
+                </div>
+                <div class="stat-box">
+                    <div>Losses</div>
+                    <div class="stat-number">{{ losses }}</div>
+                </div>
+                <div class="stat-box">
+                    <div>Draws</div>
+                    <div class="stat-number">{{ draws }}</div>
+                </div>
+                <div class="stat-box">
+                    <div>Win Rate</div>
+                    <div class="stat-number">{{ "%.1f"|format(win_rate) }}%</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="nav-buttons">
+            <a href="{{ url_for('play_game') }}" class="button">Play Game</a>
+            <a href="{{ url_for('leaderboard') }}" class="button">Leaderboard</a>
+            <a href="{{ url_for('view_stats') }}" class="button">Detailed Stats</a>
         </div>
     </div>
 </body>

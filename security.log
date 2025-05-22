@@ -14,3 +14,29 @@
 [2025-04-21 23:20:49.388370] Brute Force: Excessive failed logins from IP 127.0.0.1
 [2025-04-23 11:24:52.073897] SQL Injection: Attempt by IP 127.0.0.1 with username: ' OR 1=1 --
 [2025-04-23 11:25:01.438027] SQL Injection: Attempt by IP 127.0.0.1 with username: ' OR 1=1 --
+[2025-05-21 13:14:14,362] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.0.2.15:8000
+[2025-05-21 13:14:14,362] [33mPress CTRL+C to quit[0m
+[2025-05-21 15:29:00,340] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.0.2.15:8000
+[2025-05-21 15:29:00,340] [33mPress CTRL+C to quit[0m
+[2025-05-21 16:40:44,798] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.0.2.15:8000
+[2025-05-21 16:40:44,799] [33mPress CTRL+C to quit[0m
+[2025-05-21 16:48:57,126] [REMOTE ALERT] Test from Windows host
+[2025-05-21 16:48:57,127] 10.0.2.2 - - [21/May/2025 16:48:57] "POST /log_alert HTTP/1.1" 200 -
+[2025-05-22 21:48:42,556] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:8000
+ * Running on http://10.0.2.15:8000
+[2025-05-22 21:48:42,557] [33mPress CTRL+C to quit[0m
+[2025-05-22 21:50:36,126] [REMOTE ALERT] Test from Windows host
+[2025-05-22 21:50:36,127] 10.0.2.2 - - [22/May/2025 21:50:36] "POST /log_alert HTTP/1.1" 200 -
+[2025-05-22 21:51:00,047] [REMOTE ALERT] Test from Windows host
+[2025-05-22 21:51:00,048] 10.0.2.2 - - [22/May/2025 21:51:00] "POST /log_alert HTTP/1.1" 200 -

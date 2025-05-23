@@ -1,3 +1,6 @@
+from flask import Flask, render_template, request, redirect, url_for, flash
+from ids_monitor import is_sql_injection, log_attack  # <-- Import the IDS functions here
+
 from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
 import hashlib
@@ -6,6 +9,17 @@ import random
 import logging
 from datetime import datetime
 from collections import defaultdict
+
+# test commit to check Git tracking
+
+import requests
+
+def send_ids_alert(alert_msg):
+    try:
+        requests.post("http://abc123.ngrok.io/log_alert", json={"alert": alert_msg})
+    except Exception as e:
+        print(f"[!] Could not send alert to IDS: {e}")
+
 
 # Set up logging to stdout for Railway compatibility
 logging.basicConfig(
@@ -135,10 +149,17 @@ def login():
 
         # --- Detect SQL Injection ---
         sql_injection_patterns = ["' OR '1'='1", "'--", "' OR 1=1", "\" OR \"1\"=\"1", "' OR ''='", "' OR 'x'='x"]
-        for pattern in sql_injection_patterns:
-            if pattern.lower() in username.lower() or pattern.lower() in password.lower():
-                log_security_alert("SQL Injection", f"Attempt by IP {ip_address} with username: {username}")
-                return render_template('sql_injection_alert.html')
+       
+    for pattern in sql_injection_patterns:
+     if pattern.lower() in username.lower() or pattern.lower() in password.lower():
+        alert_message = f"SQL Injection detected from IP {ip_address} with username: {username}"
+        log_security_alert("SQL Injection", alert_message)
+        send_ids_alert(alert_message)
+        return render_template('sql_injection_alert.html')
+
+
+
+
 
         # --- Detect brute force: more than 5 failed attempts ---
         if failed_login_attempts.get(ip_address, 0) > 5:

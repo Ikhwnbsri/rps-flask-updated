@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
-from ids_monitor import is_sql_injection, log_attack  # <-- Import the IDS functions here
+#from ids_monitor import is_sql_injection, log_attack  # <-- Import the IDS functions here
 
 from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3

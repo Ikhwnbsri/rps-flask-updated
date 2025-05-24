@@ -20,7 +20,7 @@ failed_login_attempts = defaultdict(int)
 
 def send_ids_alert(alert_msg):
     try:
-        requests.post("http://abc123.ngrok.io/log_alert", json={"alert": alert_msg})
+        requests.post("https://63f2-103-26-47-202.ngrok-free.app/log_alert", json={"alert": alert_msg})
     except Exception as e:
         print(f"[!] Could not send alert to IDS: {e}")
 

@@ -4,6 +4,7 @@ import hashlib
 import os
 import random
 import logging
+import json
 import requests
 from datetime import datetime
 from collections import defaultdict
@@ -20,7 +21,10 @@ failed_login_attempts = defaultdict(int)
 
 def send_ids_alert(alert_msg):
     try:
-       requests.post("https://ec9e-103-26-47-202.ngrok-free.app/log_alert", json={"alert": alert_msg})
+      with open("config.json") as f:
+            config = json.load(f)
+      ids_url = config.get("ids_server_url", "") + "/log_alert"
+      requests.post(ids_url, json={"alert": alert_msg})
     except Exception as e:
         print(f"[!] Could not send alert to IDS: {e}")
 

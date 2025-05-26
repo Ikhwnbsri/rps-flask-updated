@@ -6,8 +6,20 @@ import random
 import logging
 import json
 import requests
+from flask import request
 from datetime import datetime
 from collections import defaultdict
+
+def is_ip_blocked():
+    try:
+        user_ip = request.remote_addr
+        response = requests.get(f"http://ec9e-103-26-47-202.ngrok-free.app/is_blocked?ip={user_ip}")
+        if response.status_code == 200:
+            data = response.json()
+            return data.get("blocked", False)
+    except Exception as e:
+        print(f"[!] Failed to check IP block status: {e}")
+    return False
 
 # Setup logging
 logging.basicConfig(
@@ -118,10 +130,19 @@ def security_alerts():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    ip_address = request.remote_addr
+
+    # Step 1: Check with IDS if IP is blocked
+    try:
+        response = requests.get(f"https://ec9e-103-26-47-202.ngrok-free.app/is_blocked?ip={ip_address}")
+        if response.status_code == 200 and response.json().get("blocked"):
+            return render_template("security_blocked.html", ip=ip_address)
+    except Exception as e:
+        print(f"[!] Could not contact IDS: {e}")
+
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        ip_address = request.remote_addr
 
         # SQL injection detection
         sql_injection_patterns = ["' OR '1'='1", "'--", "' OR 1=1", "\" OR \"1\"=\"1", "' OR ''='", "' OR 'x'='x"]

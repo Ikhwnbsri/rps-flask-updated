@@ -64,6 +64,17 @@
             text-decoration: underline;
         }
     </style>
+
+    <!-- 🔒 Prevent back button bypass -->
+    <script>
+        // Prevent navigating back to this page
+        if (window.history && window.history.pushState) {
+            window.history.pushState(null, "", window.location.href);
+            window.onpopstate = function () {
+                window.history.pushState(null, "", window.location.href);
+            };
+        }
+    </script>
 </head>
 <body>
     <div class="container">

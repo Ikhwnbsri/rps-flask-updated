@@ -13,13 +13,23 @@ from collections import defaultdict
 def is_ip_blocked():
     try:
         user_ip = request.remote_addr
-        response = requests.get(f"http://ec9e-103-26-47-202.ngrok-free.app/is_blocked?ip={user_ip}")
+
+        # Load IDS server URL from config.json
+        with open("config.json") as f:
+            config = json.load(f)
+        ids_url = config.get("ids_server_url", "")
+
+        response = requests.post(
+            f"{ids_url}/check_ip",
+            json={"ip": user_ip}
+        )
         if response.status_code == 200:
             data = response.json()
-            return data.get("blocked", False)
+            return data.get("status") == "BLOCK"
     except Exception as e:
         print(f"[!] Failed to check IP block status: {e}")
     return False
+
 
 # Setup logging
 logging.basicConfig(
@@ -134,9 +144,15 @@ def login():
 
     # Step 1: Check with IDS if IP is blocked
     try:
-        response = requests.get(f"https://ec9e-103-26-47-202.ngrok-free.app/is_blocked?ip={ip_address}")
-        if response.status_code == 200 and response.json().get("blocked"):
-            return render_template("security_blocked.html", ip=ip_address)
+        with open("config.json") as f:
+            config = json.load(f)
+        ids_url = config.get("ids_server_url", "")
+        
+        response = requests.post(f"{ids_url}/check_ip", json={"ip": ip_address})
+        if response.status_code == 200:
+            data = response.json()
+            if data.get("status") == "BLOCK":
+                return render_template("security_blocked.html", ip=ip_address)
     except Exception as e:
         print(f"[!] Could not contact IDS: {e}")
 

@@ -6,60 +6,49 @@ import random
 import logging
 import json
 import requests
-from flask import request
 from datetime import datetime
 from collections import defaultdict
 
-def is_ip_blocked():
-    try:
-        user_ip = request.remote_addr
-
-        # Load IDS server URL from config.json
-        with open("config.json") as f:
-            config = json.load(f)
-        ids_url = config.get("ids_server_url", "")
-
-        response = requests.post(
-            f"{ids_url}/check_ip",
-            json={"ip": user_ip}
-        )
-        if response.status_code == 200:
-            data = response.json()
-            return data.get("status") == "BLOCK"
-    except Exception as e:
-        print(f"[!] Failed to check IP block status: {e}")
-    return False
-
-
-# Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='[%(asctime)s] %(levelname)s: %(message)s',
-    handlers=[logging.StreamHandler()]
-)
-
-# Brute force tracking
-failed_login_attempts = defaultdict(int)
-
-def send_ids_alert(alert_msg):
-    try:
-      with open("config.json") as f:
-            config = json.load(f)
-      ids_url = config.get("ids_server_url", "") + "/log_alert"
-      requests.post(ids_url, json={"alert": alert_msg})
-    except Exception as e:
-        print(f"[!] Could not send alert to IDS: {e}")
-
-def log_failed_login(username, ip_address):
-    failed_login_attempts[ip_address] += 1
-    logging.warning(f"[SECURITY ALERT] Failed login from {username} @ {ip_address} | Attempt #{failed_login_attempts[ip_address]}")
-
-def log_security_alert(alert_type, message):
-    logging.warning(f"[{alert_type}] {message}")
-
+# Flask app and config
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24))
 
+# Logging
+logging.basicConfig(level=logging.INFO, format='[%(asctime)s] %(levelname)s: %(message)s')
+
+# Track failed logins
+failed_login_attempts = defaultdict(int)
+
+# Load IDS URL from config
+def get_ids_url():
+    try:
+        with open("config.json") as f:
+            config = json.load(f)
+        return config.get("ids_server_url", "")
+    except Exception as e:
+        print(f"[!] Failed to load IDS config: {e}")
+        return ""
+
+# Send alert to IDS
+def send_ids_alert(alert_msg, ip):
+    try:
+        ids_url = get_ids_url() + "/log_alert"
+        requests.post(ids_url, json={"alert": alert_msg, "ip": ip})
+    except Exception as e:
+        print(f"[!] Could not send alert to IDS: {e}")
+
+# Check if IP is blocked
+def is_ip_blocked(ip):
+    try:
+        ids_url = get_ids_url() + "/check_ip"
+        response = requests.post(ids_url, json={"ip": ip})
+        if response.status_code == 200:
+            return response.json().get("status") == "BLOCK"
+    except Exception as e:
+        print(f"[!] Could not contact IDS: {e}")
+    return False
+
+# DB setup
 def setup_database():
     conn = sqlite3.connect('rps_game.db')
     cursor = conn.cursor()
@@ -74,12 +63,30 @@ def setup_database():
     conn.commit()
     return conn
 
+# Password hashing
 def generate_salt():
     return os.urandom(16).hex()
 
 def hash_password(password, salt):
     return hashlib.sha256((password + salt).encode()).hexdigest()
 
+# Logging helpers
+def log_failed_login(username, ip):
+    failed_login_attempts[ip] += 1
+    logging.warning(f"[SECURITY ALERT] Failed login for {username} from {ip} | Attempt #{failed_login_attempts[ip]}")
+
+def log_security_alert(alert_type, message):
+    logging.warning(f"[{alert_type}] {message}")
+
+# Cache prevention
+@app.after_request
+def add_cache_control(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
+# Routes
 @app.route('/')
 def home():
     return redirect(url_for('login'))
@@ -88,7 +95,7 @@ def home():
 def dashboard():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    
+
     conn = setup_database()
     cursor = conn.cursor()
     cursor.execute("SELECT username, wins, losses, draws FROM users WHERE id = ?", (session['user_id'],))
@@ -97,8 +104,8 @@ def dashboard():
 
     if user_data:
         username, wins, losses, draws = user_data
-        total_games = wins + losses + draws
-        win_rate = (wins / total_games * 100) if total_games > 0 else 0
+        total = wins + losses + draws
+        win_rate = (wins / total * 100) if total > 0 else 0
     else:
         username = session.get('username', 'Unknown')
         wins = losses = draws = win_rate = 0
@@ -116,13 +123,9 @@ def view_stats():
     stats = cursor.fetchone()
     conn.close()
 
-    if stats:
-        wins, losses, draws = stats
-        total_games = wins + losses + draws
-        win_rate = (wins / total_games * 100) if total_games > 0 else 0
-    else:
-        wins = losses = draws = win_rate = 0
-
+    wins, losses, draws = stats if stats else (0, 0, 0)
+    total = wins + losses + draws
+    win_rate = (wins / total * 100) if total > 0 else 0
     return render_template('stats.html', wins=wins, losses=losses, draws=draws, win_rate=win_rate)
 
 @app.route('/leaderboard')
@@ -142,55 +145,41 @@ def security_alerts():
 def login():
     ip_address = request.remote_addr
 
-    def is_ip_blocked(ip_address):
-        try:
-            with open("config.json") as f:
-                config = json.load(f)
-            ids_url = config.get("ids_server_url", "")
-            response = requests.post(f"{ids_url}/check_ip", json={"ip": ip_address})
-            if response.status_code == 200:
-                data = response.json()
-                return data.get("status") == "BLOCK"
-        except Exception as e:
-            print(f"[!] Could not contact IDS: {e}")
-        return False
-
-    # Step 1: Global Block Check (GET or POST)
+    # Global block check via IDS
     if is_ip_blocked(ip_address):
-        return render_template("security_blocked.html", ip=ip_address)
+        return redirect(url_for('security_blocked'))
 
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
 
         # SQL injection detection
-        sql_injection_patterns = ["' OR '1'='1", "'--", "' OR 1=1", "\" OR \"1\"=\"1", "' OR ''='", "' OR 'x'='x"]
-        for pattern in sql_injection_patterns:
-            if pattern.lower() in username.lower() or pattern.lower() in password.lower():
-                alert_message = f"SQL Injection detected from IP {ip_address} with username: {username}"
-                log_security_alert("SQL Injection", alert_message)
-                send_ids_alert(alert_message)
-                return render_template('sql_injection_alert.html')
+        sql_patterns = ["' OR '1'='1", "'--", "' OR 1=1", "\" OR \"1\"=\"1", "' OR ''='", "' OR 'x'='x"]
+        if any(p.lower() in username.lower() or p.lower() in password.lower() for p in sql_patterns):
+            alert = f"SQL Injection detected from IP {ip_address} with username: {username}"
+            log_security_alert("SQL Injection", alert)
+            send_ids_alert(alert, ip_address)
+            return redirect(url_for('security_blocked'))  # 🔁 redirect prevents repeated logging
 
-        # Brute force detection
+        # Brute force check
         if failed_login_attempts[ip_address] > 5:
-            log_security_alert("Brute Force", f"Too many failed logins from IP {ip_address}")
+            alert = f"Too many failed logins from IP {ip_address}"
+            log_security_alert("Brute Force", alert)
             return "Too many failed login attempts. Try again later."
 
-        # Authenticate user
+        # Authenticate
         conn = setup_database()
         cursor = conn.cursor()
         cursor.execute("SELECT id, password_hash, salt FROM users WHERE username = ?", (username,))
-        user_data = cursor.fetchone()
+        user = cursor.fetchone()
         conn.close()
 
-        if user_data:
-            user_id, stored_hash, salt = user_data
+        if user:
+            user_id, stored_hash, salt = user
 
-            # 🔒 SECOND BLOCK CHECK: just before granting access
+            # Check again in case blocked during login process
             if is_ip_blocked(ip_address):
-                print(f"[!] SECOND BLOCK CHECK triggered. IP: {ip_address}")
-                return render_template("security_blocked.html", ip=ip_address)
+                return redirect(url_for('security_blocked'))
 
             if hash_password(password, salt) == stored_hash:
                 session['user_id'] = user_id
@@ -198,6 +187,7 @@ def login():
                 failed_login_attempts[ip_address] = 0
                 return redirect(url_for('dashboard'))
 
+        # Login failed
         failed_login_attempts[ip_address] += 1
         log_failed_login(username, ip_address)
         if failed_login_attempts[ip_address] == 3:
@@ -205,6 +195,7 @@ def login():
         return "Invalid username or password."
 
     return render_template('login.html')
+
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -217,15 +208,14 @@ def register():
             return "Passwords do not match."
 
         salt = generate_salt()
-        password_hash = hash_password(password, salt)
+        hashed = hash_password(password, salt)
 
         conn = setup_database()
         cursor = conn.cursor()
         try:
-            cursor.execute("INSERT INTO users (username, password_hash, salt) VALUES (?, ?, ?)", 
-                           (username, password_hash, salt))
+            cursor.execute("INSERT INTO users (username, password_hash, salt) VALUES (?, ?, ?)",
+                           (username, hashed, salt))
             conn.commit()
-            conn.close()
             return redirect(url_for('login'))
         except sqlite3.IntegrityError:
             return "Username already exists."
@@ -239,13 +229,13 @@ def play_game():
 
     if request.method == 'POST':
         user_choice = request.form['user_choice']
-        computer_choice = random.choice(['rock', 'paper', 'scissors'])
+        comp_choice = random.choice(['rock', 'paper', 'scissors'])
 
-        if user_choice == computer_choice:
+        if user_choice == comp_choice:
             result = 'draw'
-        elif (user_choice == 'rock' and computer_choice == 'scissors') or \
-             (user_choice == 'scissors' and computer_choice == 'paper') or \
-             (user_choice == 'paper' and computer_choice == 'rock'):
+        elif (user_choice == 'rock' and comp_choice == 'scissors') or \
+             (user_choice == 'scissors' and comp_choice == 'paper') or \
+             (user_choice == 'paper' and comp_choice == 'rock'):
             result = 'user'
         else:
             result = 'computer'
@@ -261,7 +251,7 @@ def play_game():
         conn.commit()
         conn.close()
 
-        return render_template('game_result.html', result=result, user_choice=user_choice, computer_choice=computer_choice)
+        return render_template('game_result.html', result=result, user_choice=user_choice, computer_choice=comp_choice)
 
     return render_template('play_game.html')
 
@@ -270,13 +260,12 @@ def logout():
     session.clear()
     return redirect(url_for('login'))
 
+@app.route('/blocked')
+def security_blocked():
+    ip = request.remote_addr
+    return render_template("security_blocked.html", ip=ip)
+
+# Run the app
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
-
-@app.after_request
-def add_cache_control(response):
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
-    response.headers["Pragma"] = "no-cache"
-    response.headers["Expires"] = "0"
-    return response

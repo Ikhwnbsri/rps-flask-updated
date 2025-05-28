@@ -1,3 +1,4 @@
+<!-- templates/security_blocked.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,50 +7,65 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            padding-top: 100px;
-            background-color: #f8d7da;
-            color: #721c24;
+            background-color: #1a1a1a;
+            color: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
         }
         .container {
-            background-color: #f5c6cb;
-            border: 1px solid #f5c6cb;
-            display: inline-block;
-            padding: 30px;
-            border-radius: 8px;
+            text-align: center;
+            background-color: #292929;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
+            max-width: 500px;
         }
         h1 {
-            margin-bottom: 20px;
+            color: #ff4c4c;
+        }
+        p {
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        .ip-box {
+            background-color: #121212;
+            border: 1px solid #ff4c4c;
+            padding: 10px;
+            border-radius: 6px;
+            margin-top: 15px;
+            display: inline-block;
+            font-family: monospace;
+        }
+        .info {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #bbbbbb;
+        }
+        a.button {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 10px 20px;
+            background-color: #444;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+        a.button:hover {
+            background-color: #666;
         }
     </style>
-
-    <!-- 🔒 Prevent caching and back button bypass -->
-    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-
-    <script>
-        // Reload page if loaded from bfcache (back-forward cache)
-        window.addEventListener('pageshow', function(event) {
-            if (event.persisted) {
-                window.location.reload();
-            }
-        });
-
-        // Prevent navigating back to this page by pushing new state
-        if (window.history && window.history.pushState) {
-            window.history.pushState(null, "", window.location.href);
-            window.onpopstate = function () {
-                window.history.pushState(null, "", window.location.href);
-            };
-        }
-    </script>
 </head>
 <body>
     <div class="container">
-        <h1>Access Denied</h1>
-        <p>Your IP ({{ ip }}) has been temporarily blocked due to suspicious activity.</p>
-        <p>Please try again later or contact the administrator if this is a mistake.</p>
+        <h1>🚫 Access Blocked</h1>
+        <p>Your IP address has been temporarily blocked due to suspicious activity.</p>
+        <div class="ip-box">{{ ip }}</div>
+        <p class="info">This block usually lasts 60 seconds. If you believe this was a mistake, please wait and try again.</p>
+        <a class="button" href="{{ url_for('login') }}">Retry Login</a>
     </div>
 </body>
 </html>

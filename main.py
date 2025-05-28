@@ -142,7 +142,7 @@ def security_alerts():
 def login():
     ip_address = request.remote_addr
 
-    # Step 1: Check with IDS if IP is blocked
+    # Step 1: Check with IDS if IP is blocked (applies to both GET and POST)
     try:
         with open("config.json") as f:
             config = json.load(f)
@@ -156,6 +156,7 @@ def login():
     except Exception as e:
         print(f"[!] Could not contact IDS: {e}")
 
+    # Step 2: If not blocked, process login form
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -189,12 +190,14 @@ def login():
                 failed_login_attempts[ip_address] = 0  # Reset on success
                 return redirect(url_for('dashboard'))
 
+        # If credentials are wrong
         failed_login_attempts[ip_address] += 1
         log_failed_login(username, ip_address)
         if failed_login_attempts[ip_address] == 3:
             log_security_alert("Suspicious", f"Suspicious login activity from {ip_address}")
         return "Invalid username or password."
 
+    # Step 3: Render login page (GET request)
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])

@@ -149,9 +149,12 @@ def login():
         ids_url = config.get("ids_server_url", "")
         
         response = requests.post(f"{ids_url}/check_ip", json={"ip": ip_address})
+        print(f"[DEBUG] IDS response: {response.status_code}, {response.text}")  # 🔍 DEBUG LOG
+
         if response.status_code == 200:
             data = response.json()
             if data.get("status") == "BLOCK":
+                print(f"[BLOCKED] IP {ip_address} is currently blocked.")
                 return render_template("security_blocked.html", ip=ip_address)
     except Exception as e:
         print(f"[!] Could not contact IDS: {e}")

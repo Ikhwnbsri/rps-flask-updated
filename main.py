@@ -142,24 +142,23 @@ def security_alerts():
 def login():
     ip_address = request.remote_addr
 
-    # Step 1: Check with IDS if IP is blocked (applies to both GET and POST)
-    try:
-        with open("config.json") as f:
-            config = json.load(f)
-        ids_url = config.get("ids_server_url", "")
-        
-        response = requests.post(f"{ids_url}/check_ip", json={"ip": ip_address})
-        print(f"[DEBUG] IDS response: {response.status_code}, {response.text}")  # 🔍 DEBUG LOG
+    def is_ip_blocked(ip_address):
+        try:
+            with open("config.json") as f:
+                config = json.load(f)
+            ids_url = config.get("ids_server_url", "")
+            response = requests.post(f"{ids_url}/check_ip", json={"ip": ip_address})
+            if response.status_code == 200:
+                data = response.json()
+                return data.get("status") == "BLOCK"
+        except Exception as e:
+            print(f"[!] Could not contact IDS: {e}")
+        return False
 
-        if response.status_code == 200:
-            data = response.json()
-            if data.get("status") == "BLOCK":
-                print(f"[BLOCKED] IP {ip_address} is currently blocked.")
-                return render_template("security_blocked.html", ip=ip_address)
-    except Exception as e:
-        print(f"[!] Could not contact IDS: {e}")
+    # Step 1: Global Block Check (GET or POST)
+    if is_ip_blocked(ip_address):
+        return render_template("security_blocked.html", ip=ip_address)
 
-    # Step 2: If not blocked, process login form
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -187,20 +186,24 @@ def login():
 
         if user_data:
             user_id, stored_hash, salt = user_data
+
+            # 🔒 SECOND BLOCK CHECK: just before granting access
+            if is_ip_blocked(ip_address):
+                print(f"[!] SECOND BLOCK CHECK triggered. IP: {ip_address}")
+                return render_template("security_blocked.html", ip=ip_address)
+
             if hash_password(password, salt) == stored_hash:
                 session['user_id'] = user_id
                 session['username'] = username
-                failed_login_attempts[ip_address] = 0  # Reset on success
+                failed_login_attempts[ip_address] = 0
                 return redirect(url_for('dashboard'))
 
-        # If credentials are wrong
         failed_login_attempts[ip_address] += 1
         log_failed_login(username, ip_address)
         if failed_login_attempts[ip_address] == 3:
             log_security_alert("Suspicious", f"Suspicious login activity from {ip_address}")
         return "Invalid username or password."
 
-    # Step 3: Render login page (GET request)
     return render_template('login.html')
 
 @app.route('/register', methods=['GET', 'POST'])

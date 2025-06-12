@@ -192,7 +192,9 @@ def login():
         log_failed_login(username, ip_address)
         if failed_login_attempts[ip_address] == 3:
             log_security_alert("Suspicious", f"Suspicious login activity from {ip_address}")
-        return "Invalid username or password."
+        flash("Invalid login credentials.")
+        return redirect(url_for('login'))
+
 
     return render_template('login.html')
 

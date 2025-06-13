@@ -142,6 +142,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
+        # SQL injection detection
         sql_patterns = ["' OR '1'='1", "'--", "' OR 1=1", "\" OR \"1\"=\"1", "' OR ''='", "' OR 'x'='x"]
         if any(p.lower() in username.lower() or p.lower() in password.lower() for p in sql_patterns):
             alert = f"SQL Injection detected from IP {ip_address} with username: {username}"
@@ -151,12 +152,13 @@ def login():
 
         user = User.query.filter_by(username=username).first()
         if user and hash_password(password, user.salt) == user.password_hash:
+            # ✅ Valid login, reset failed count
+            failed_login_attempts[ip_address] = 0
             session['user_id'] = user.id
             session['username'] = user.username
-            failed_login_attempts[ip_address] = 0
             return redirect(url_for('dashboard'))
 
-        # Failed login
+        # ❌ Invalid login
         failed_login_attempts[ip_address] += 1
         log_failed_login(username, ip_address)
 

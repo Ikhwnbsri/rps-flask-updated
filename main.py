@@ -149,11 +149,6 @@ def login():
             send_ids_alert(alert, ip_address)
             return redirect(url_for('security_blocked'))
 
-        if failed_login_attempts[ip_address] > 5:
-            alert = f"Too many failed logins from IP {ip_address}"
-            log_security_alert("Brute Force", alert)
-            return "Too many failed login attempts. Try again later."
-
         user = User.query.filter_by(username=username).first()
         if user and hash_password(password, user.salt) == user.password_hash:
             session['user_id'] = user.id
@@ -161,10 +156,19 @@ def login():
             failed_login_attempts[ip_address] = 0
             return redirect(url_for('dashboard'))
 
+        # Failed login
         failed_login_attempts[ip_address] += 1
         log_failed_login(username, ip_address)
+
+        if failed_login_attempts[ip_address] > 5:
+            alert = f"Too many failed logins from IP {ip_address}"
+            log_security_alert("Brute Force", alert)
+            send_ids_alert(alert, ip_address)
+            return "Too many failed login attempts. Try again later."
+
         if failed_login_attempts[ip_address] == 3:
             log_security_alert("Suspicious", f"Suspicious login activity from {ip_address}")
+
         flash("Invalid login credentials.")
         return redirect(url_for('login'))
 

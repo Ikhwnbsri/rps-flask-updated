@@ -30,8 +30,8 @@ def get_config():
 
 config = get_config()
 
-# PostgreSQL config
-app.config['SQLALCHEMY_DATABASE_URI'] = config.get("database_url")
+# ✅ SQLite config (reverted)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rps.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Init DB
@@ -152,13 +152,11 @@ def login():
 
         user = User.query.filter_by(username=username).first()
         if user and hash_password(password, user.salt) == user.password_hash:
-            # ✅ Valid login, reset failed count
             failed_login_attempts[ip_address] = 0
             session['user_id'] = user.id
             session['username'] = user.username
             return redirect(url_for('dashboard'))
 
-        # ❌ Invalid login
         failed_login_attempts[ip_address] += 1
         log_failed_login(username, ip_address)
 

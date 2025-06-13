@@ -44,6 +44,12 @@
             font-size: 14px;
             color: #bbbbbb;
         }
+        .countdown {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #ffcc00;
+        }
         a.button {
             display: inline-block;
             margin-top: 25px;
@@ -65,7 +71,24 @@
         <p>Your IP address has been temporarily blocked due to suspicious activity.</p>
         <div class="ip-box">{{ ip }}</div>
         <p class="info">This block usually lasts 60 seconds. If you believe this was a mistake, please wait and try again.</p>
+        <div class="countdown">
+            Time remaining: <span id="timer">60</span> seconds
+        </div>
         <a class="button" href="{{ url_for('login') }}">Retry Login</a>
     </div>
+
+    <script>
+        let seconds = 60;
+        const timerElement = document.getElementById("timer");
+
+        const countdown = setInterval(() => {
+            seconds--;
+            if (seconds >= 0) {
+                timerElement.textContent = seconds;
+            } else {
+                clearInterval(countdown);
+            }
+        }, 1000);
+    </script>
 </body>
 </html>

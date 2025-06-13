@@ -1,4 +1,4 @@
 {
-  "database_url": "sqlite:///rps.db",
+  "database_url": "sqlite:///rps_game.db",
   "ids_server_url": "https://feb3-103-26-47-195.ngrok-free.app"
 }

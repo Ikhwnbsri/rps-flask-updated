@@ -31,7 +31,7 @@ def get_config():
 config = get_config()
 
 # ✅ SQLite config (reverted)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rps.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rps_game.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Init DB

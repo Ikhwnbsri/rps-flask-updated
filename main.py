@@ -134,7 +134,7 @@ def security_alerts():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    ip_address = request.remote_addr
+    ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
     if is_ip_blocked(ip_address):
         return redirect(url_for('security_blocked'))
 

@@ -20,6 +20,10 @@ app.secret_key = 'supersecretkey'
 # Initialize DB
 db = SQLAlchemy(app)
 
+# Create tables (TEMPORARY: only keep this during first deploy!)
+with app.app_context():
+    db.create_all()
+
 # IDS Server URL
 IDS_SERVER_URL = config['ids_server_url']
 

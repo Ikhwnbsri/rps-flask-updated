@@ -1,4 +1,4 @@
 {
-  "database_url": "sqlite:///rps_game.db",
-  "ids_server_url": "https://feb3-103-26-47-195.ngrok-free.app"
+  "database_url": "postgresql://rpsuser:rpspassword@localhost:5432/rpsdb",
+  "ids_server_url": "https://c9e9-103-26-47-198.ngrok-free.app"
 }

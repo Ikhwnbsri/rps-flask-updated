@@ -129,53 +129,54 @@
         </div>
         
         <div class="result-area">
-            {% if result == 'user' %}
+            {% if result == 'win' %}
                 <div class="result-display win">
-                    <div class="result-text">You Won! 🏆</div>
+                    <div class="result-text">You Won! 🏆🏆🏆🏆🏆</div>
                 </div>
-            {% elif result == 'computer' %}
+            {% elif result == 'lose' %}
                 <div class="result-display lose">
-                    <div class="result-text">You Lost! 😞</div>
+                    <div class="result-text">You Lost! 😞😞😞😞</div>
                 </div>
             {% else %}
                 <div class="result-display draw">
-                    <div class="result-text">It's a Draw! 🤝</div>
+                    <div class="result-text">It's a Draw! 🤝🤝🤝🤝🤝</div>
                 </div>
             {% endif %}
+
             
             <div class="choices">
                 <div class="choice-box">
                     <h3>Your Choice</h3>
                     <div class="choice-img">
-                        {% if user_choice == 'rock' %}
+                        {% if player_move == 'rock' %}
                             <div class="choice-icon rock-icon">🪨</div>
-                        {% elif user_choice == 'paper' %}
+                        {% elif player_move == 'paper' %}
                             <div class="choice-icon paper-icon">📄</div>
                         {% else %}
                             <div class="choice-icon scissors-icon">✂️</div>
                         {% endif %}
                     </div>
-                    <p>{{ user_choice|capitalize }}</p>
+                    <p>{{ player_move|capitalize }}</p>
                 </div>
                 
                 <div class="choice-box">
                     <h3>Computer's Choice</h3>
                     <div class="choice-img">
-                        {% if computer_choice == 'rock' %}
+                        {% if computer_move == 'rock' %}
                             <div class="choice-icon rock-icon">🪨</div>
-                        {% elif computer_choice == 'paper' %}
+                        {% elif computer_move == 'paper' %}
                             <div class="choice-icon paper-icon">📄</div>
                         {% else %}
                             <div class="choice-icon scissors-icon">✂️</div>
                         {% endif %}
                     </div>
-                    <p>{{ computer_choice|capitalize }}</p>
+                    <p>{{ computer_move|capitalize }}</p>
                 </div>
             </div>
             
             <div class="nav-buttons">
                 <a href="{{ url_for('play_game') }}" class="button">Play Again</a>
-                <a href="{{ url_for('view_stats') }}" class="button">View Stats</a>
+                <a href="{{ url_for('stats') }}" class="button">View Stats</a>
             </div>
         </div>
     </div>

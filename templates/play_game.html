@@ -33,56 +33,30 @@
         .choices {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 30px;
             margin: 30px 0;
         }
         .choice {
-            width: 120px;
-            height: 120px;
-            border: 2px solid #ddd;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            background-color: white;
-            overflow: hidden;
-        }
-        .choice:hover {
-            transform: scale(1.1);
-            border-color: #4CAF50;
-            box-shadow: 0 0 15px rgba(76, 175, 80, 0.3);
+            text-align: center;
         }
         .choice input[type="radio"] {
-            position: absolute;
-            opacity: 0;
-            width: 0;
-            height: 0;
+            display: none;
         }
-        .choice-icon {
-            font-size: 50px;
-            line-height: 1;
+        .choice label {
+            display: block;
+            width: 100px;
+            height: 100px;
+            border: 3px solid #ccc;
+            border-radius: 50%;
+            font-size: 40px;
+            line-height: 100px;
+            cursor: pointer;
+            transition: 0.3s ease;
+            background-color: white;
         }
-        .rock-icon {
-            color: #696969;
-        }
-        .paper-icon {
-            color: #4169E1;
-        }
-        .scissors-icon {
-            color: #FF6347;
-        }
-        .choice-label {
-            position: absolute;
-            bottom: 5px;
-            left: 0;
-            right: 0;
-            text-align: center;
-            font-size: 12px;
-            font-weight: bold;
-            color: #555;
+        .choice input[type="radio"]:checked + label {
+            border-color: #4CAF50;
+            box-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
         }
         .button {
             padding: 12px 25px;
@@ -92,11 +66,8 @@
             border-radius: 4px;
             cursor: pointer;
             text-decoration: none;
-            display: inline-block;
             font-size: 16px;
-            text-align: center;
             font-weight: bold;
-            transition: background-color 0.3s;
         }
         .button:hover {
             background-color: #45a049;
@@ -107,10 +78,6 @@
             gap: 10px;
             margin-top: 20px;
         }
-        .selected {
-            border-color: #4CAF50;
-            box-shadow: 0 0 15px rgba(76, 175, 80, 0.5);
-        }
     </style>
 </head>
 <body>
@@ -119,56 +86,36 @@
             <h1>Rock Paper Scissors Game</h1>
             <a href="{{ url_for('dashboard') }}" class="button">Back to Dashboard</a>
         </div>
-        
+
         <div class="game-area">
             <h2>Choose Your Move</h2>
             <form method="POST" action="{{ url_for('play_game') }}">
                 <div class="choices">
-                    <label class="choice" id="rock-choice">
-                        <input type="radio" name="user_choice" value="rock" required>
-                        <div class="choice-icon rock-icon">🪨</div>
-                        <div class="choice-label">Rock</div>
-                    </label>
-                    
-                    <label class="choice" id="paper-choice">
-                        <input type="radio" name="user_choice" value="paper">
-                        <div class="choice-icon paper-icon">📄</div>
-                        <div class="choice-label">Paper</div>
-                    </label>
-                    
-                    <label class="choice" id="scissors-choice">
-                        <input type="radio" name="user_choice" value="scissors">
-                        <div class="choice-icon scissors-icon">✂️</div>
-                        <div class="choice-label">Scissors</div>
-                    </label>
+                    <div class="choice">
+                        <input type="radio" id="rock" name="move" value="rock" required>
+                        <label for="rock">🪨</label>
+                        <div>Rock</div>
+                    </div>
+                    <div class="choice">
+                        <input type="radio" id="paper" name="move" value="paper">
+                        <label for="paper">📄</label>
+                        <div>Paper</div>
+                    </div>
+                    <div class="choice">
+                        <input type="radio" id="scissors" name="move" value="scissors">
+                        <label for="scissors">✂️</label>
+                        <div>Scissors</div>
+                    </div>
                 </div>
-                
+
                 <button type="submit" class="button">Play!</button>
             </form>
         </div>
-        
+
         <div class="nav-buttons">
             <a href="{{ url_for('dashboard') }}" class="button">Dashboard</a>
             <a href="{{ url_for('leaderboard') }}" class="button">Leaderboard</a>
         </div>
     </div>
-    
-    <script>
-        // Add active class to selected choice
-        document.addEventListener('DOMContentLoaded', function() {
-            const choices = document.querySelectorAll('.choice');
-            choices.forEach(choice => {
-                choice.addEventListener('click', function() {
-                    // Remove active class from all choices
-                    choices.forEach(c => c.classList.remove('selected'));
-                    // Add active class to selected choice
-                    this.classList.add('selected');
-                    // Select the radio button
-                    const radio = this.querySelector('input[type="radio"]');
-                    radio.checked = true;
-                });
-            });
-        });
-    </script>
 </body>
 </html>

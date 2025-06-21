@@ -1,4 +1,5 @@
 # unchanged imports
+import os
 import json
 import requests
 from flask import Flask, render_template, request, redirect, url_for, session, flash

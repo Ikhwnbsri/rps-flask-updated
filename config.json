@@ -1,4 +1,4 @@
 {
-  "database_url": "postgresql://postgres:zUpGhEYoqvVAjQoEbOCnICUuJdDZxFlD@postgres.railway.internal:5432/railway",
+  "database_url": "postgresql://postgres:zUpGhEYoqvVAjQoEbOCnICUuJdDZxFlD@switchback.proxy.rlwy.net:40211/railway",
   "ids_server_url": "https://c9e9-103-26-47-198.ngrok-free.app"
 }

@@ -19,7 +19,6 @@ app.secret_key = 'supersecretkey'
 
 # Initialize DB
 db = SQLAlchemy(app)
-# Create tables (TEMPORARY: only keep this during first deploy!)
 
 # IDS Server URL
 IDS_SERVER_URL = config['ids_server_url']
@@ -83,7 +82,20 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        if any(char in username for char in ["'", "\"", ";", "--"]) or any(char in password for char in ["'", "\"", ";", "--"]):
+        suspicious_patterns = [
+            "' OR '1'='1",
+            "'OR'1'='1",
+            "' OR 1=1 --",
+            "' OR 1=1#",
+            "'--",
+            "'#",
+            "' OR 1=1",
+            '\" OR \"1\"=\"1',
+            "OR 1=1",
+            "' OR 'a'='a"
+        ]
+
+        if any(pattern in username for pattern in suspicious_patterns) or any(pattern in password for pattern in suspicious_patterns):
             alert_data = {
                 'ip': ip_address,
                 'alert_type': 'SQL Injection Attempt',
@@ -94,6 +106,7 @@ def login():
             except Exception as e:
                 print("Failed to send alert to IDS:", e)
 
+            print("[DEBUG] SQL Injection pattern detected!")
             flash("Suspicious activity detected.")
             return redirect(url_for('login'))
 

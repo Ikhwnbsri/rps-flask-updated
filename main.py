@@ -66,50 +66,39 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
+
+    # Check if IP is blocked by IDS
+    try:
+        response = requests.post(f"{IDS_SERVER_URL}/check_ip", json={'ip': ip_address}, timeout=3)
+        if response.status_code == 200 and response.json().get('blocked'):
+            return render_template('security_blocked.html')
+    except Exception as e:
+        print("Failed to contact IDS server:", e)
+
     if request.method == 'POST':
-        ip_address = request.remote_addr
-        check_url = f"{IDS_SERVER_URL}/check_ip"
-
-        try:
-            response = requests.post(check_url, json={'ip': ip_address}, timeout=3)
-            if response.status_code == 200:
-                result = response.json()
-                if result.get('blocked'):
-                    return render_template('security_blocked.html')
-        except Exception as e:
-            print("Failed to contact IDS server:", e)
-
         username = request.form['username']
         password = request.form['password']
 
-        suspicious_patterns = [
-            "' OR '1'='1",
-            "'OR'1'='1",
-            "' OR 1=1 --",
-            "' OR 1=1#",
-            "'--",
-            "'#",
-            "' OR 1=1",
-            '\" OR \"1\"=\"1',
-            "OR 1=1",
-            "' OR 'a'='a"
+        # Expanded SQL injection pattern detection
+        sqli_patterns = [
+            "' OR '1'='1", "'--", "' OR 1=1", '" OR "1"="1',
+            "' OR ''='", "' OR 'x'='x", "';--", '" or ""="', "' or 1=1--",
+            "' or 'a'='a", "' or 1=1#", "admin' --", "' or sleep", "' or true--"
         ]
-
-        if any(pattern in username for pattern in suspicious_patterns) or any(pattern in password for pattern in suspicious_patterns):
+        if any(p.lower() in username.lower() or p.lower() in password.lower() for p in sqli_patterns):
             alert_data = {
                 'ip': ip_address,
                 'alert_type': 'SQL Injection Attempt',
                 'details': f"Suspicious input detected. Username: {username}"
             }
             try:
-                requests.post(f"{IDS_SERVER_URL}/log_alert", json=alert_data)
+                requests.post(f"{IDS_SERVER_URL}/log_alert", json=alert_data, timeout=3)
             except Exception as e:
                 print("Failed to send alert to IDS:", e)
+            return render_template('security_blocked.html')
 
-            print("[DEBUG] SQL Injection pattern detected!")
-            flash("Suspicious activity detected.")
-            return redirect(url_for('login'))
-
+        # Proceed with login
         user = User.query.filter_by(username=username, password=password).first()
         if user:
             session['username'] = username

@@ -101,8 +101,10 @@ def login():
             session['username'] = user.username
             return redirect(url_for('dashboard'))
 
-        flash("Invalid login credentials.")
-        return redirect(url_for('login'))
+        #flash("Invalid login credentials.")
+        #return redirect(url_for('login'))
+        return render_template('invalid_login.html', username=username)
+
 
     return render_template('login.html')
 

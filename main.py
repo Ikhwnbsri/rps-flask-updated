@@ -217,6 +217,11 @@ def check_alerts():
     logs = response.json().get('logs', [])
     return render_template('security_alerts.html', logs=logs)
 
+@app.route('/blocked')
+def security_blocked():
+    ip = request.remote_addr
+    return render_template("security_blocked.html", ip=ip)
+
 import os
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

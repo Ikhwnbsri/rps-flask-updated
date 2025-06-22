@@ -68,48 +68,41 @@ def register():
 def login():
     ip_address = request.headers.get('X-Forwarded-For', request.remote_addr)
 
-    # ✅ Full list of SQL injection patterns to detect
-    sql_injection_patterns = [
-        "' OR '1'='1", "'--", "' OR 1=1", '" OR "1"="1',
-        "' OR ''='", "' OR 'x'='x", "';--", '" or ""="',
-        "' or 1=1--", "' or 'a'='a", "' or 1=1#", "admin' --",
-        "' or sleep", "' or true--"
-    ]
+    # Step 1: Check if IP is already blocked
+    try:
+        check_url = f"{IDS_SERVER_URL}/check_ip"
+        response = requests.post(check_url, json={"ip": ip_address}, timeout=3)
+        if response.status_code == 200 and response.json().get("status") == "BLOCK":
+            return render_template("security_blocked.html", ip=ip_address)
+    except Exception as e:
+        print(f"[!] Error contacting IDS: {e}")
 
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
 
-        # ✅ Detect SQLi attempts before doing anything else
-        if any(pattern.lower() in username.lower() or pattern.lower() in password.lower() for pattern in sql_injection_patterns):
-            alert_data = {
-                'ip': ip_address,
-                'alert_type': 'SQL Injection Attempt',
-                'details': f"SQLi detected from {ip_address} | Username: {username}"
-            }
+        # Step 2: SQL Injection patterns
+        sql_patterns = [
+            "' OR '1'='1", "'--", "' OR 1=1", '" OR "1"="1',
+            "' OR ''='", "' OR 'x'='x", "';--", '" or ""="', "' or 1=1--",
+            "' or 'a'='a", "' or 1=1#", "admin' --", "' or sleep", "' or true--"
+        ]
+        if any(p.lower() in username.lower() or p.lower() in password.lower() for p in sql_patterns):
+            alert_msg = f"SQL Injection detected from IP {ip_address} with username: {username}"
             try:
-                requests.post(f"{IDS_SERVER_URL}/log_alert", json=alert_data)
+                requests.post(f"{IDS_SERVER_URL}/log_alert", json={"alert": alert_msg, "ip": ip_address})
             except Exception as e:
                 print(f"[!] Failed to send alert to IDS: {e}")
+            return render_template("security_blocked.html", ip=ip_address)
 
-            return redirect(url_for('security_blocked'))
-
-        # ✅ Check if IP is blocked (e.g. from previous SQLi or brute force)
-        try:
-            response = requests.post(f"{IDS_SERVER_URL}/check_ip", json={'ip': ip_address}, timeout=3)
-            if response.status_code == 200 and response.json().get('blocked'):
-                return render_template('security_blocked.html')
-        except Exception as e:
-            print(f"[!] Failed to contact IDS server: {e}")
-
-        # ✅ Validate login
+        # Step 3: Login Logic
         user = User.query.filter_by(username=username, password=password).first()
         if user:
-            session['username'] = username
+            session['username'] = user.username
             return redirect(url_for('dashboard'))
-        else:
-            flash("Invalid credentials")
-            return redirect(url_for('login'))
+
+        flash("Invalid login credentials.")
+        return redirect(url_for('login'))
 
     return render_template('login.html')
 

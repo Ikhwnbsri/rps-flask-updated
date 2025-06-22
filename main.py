@@ -83,10 +83,44 @@ def login():
 
         # Step 2: SQL Injection patterns
         sql_patterns = [
-            "' OR '1'='1", "'--", "' OR 1=1", '" OR "1"="1',
-            "' OR ''='", "' OR 'x'='x", "';--", '" or ""="', "' or 1=1--",
-            "' or 'a'='a", "' or 1=1#", "admin' --", "' or sleep", "' or true--"
+        "' OR '1'='1",
+        "'--",
+        "' OR 1=1",
+        '" OR "1"="1',
+        "' OR ''='",
+        "' OR 'x'='x",
+        "';--",
+        '" or ""="',
+        "' or 1=1--",
+        "' or 'a'='a",
+        "' or 1=1#",
+        "admin' --",
+        "' or sleep",
+        "' or true--",
+        "') OR ('1'='1",
+        "' or '1'='1' --",
+        "' or 1=1#",
+        "') or ('a'='a",
+        "' OR EXISTS(SELECT * FROM users) --",
+        '" OR EXISTS(SELECT * FROM users) --',
+        "'; DROP TABLE users --",
+        "' UNION SELECT null, null, null--",
+        "' UNION SELECT username, password FROM users--",
+        "' AND 1=(SELECT COUNT(*) FROM tablename)--",
+        "' AND 1=1 --",
+        "' AND 1=2 --",
+        "' AND 'a'='a",
+        "' AND 'a'='b",
+        "' AND ASCII(SUBSTRING(@@version,1,1))=52 --",
+        "' OR '' = '",
+        'admin" --',
+        '" or "" = "',
+        "') or ('1'='1",
+        "1' ORDER BY 1--",
+        "' or sleep(3) and 'a'='a",
+        "' OR 1=1 LIMIT 1--"
         ]
+
         if any(p.lower() in username.lower() or p.lower() in password.lower() for p in sql_patterns):
             alert_msg = f"SQL Injection detected from IP {ip_address} with username: {username}"
             try:

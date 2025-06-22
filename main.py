@@ -219,8 +219,8 @@ def check_alerts():
 
 @app.route('/blocked')
 def security_blocked():
-    ip = request.remote_addr
-    return render_template("security_blocked.html", ip=ip)
+    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    return render_template('security_blocked.html', ip=ip)
 
 import os
 if __name__ == '__main__':
